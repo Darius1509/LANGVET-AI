@@ -11,11 +11,11 @@
 
   Iosub Miruna Elena
 
-  Dinu Darius Dragos
+  Dinu Darius Dragos -> dariusdinu19@gmail.com
 
 - **Tehnical Coordinators**:
 
-  Adrian  Iftene
+  Adrian  Iftene -> adiftene@gmail.com
 
   Diana Trandabat
 
