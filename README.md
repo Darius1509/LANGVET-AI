@@ -9,7 +9,7 @@
 
 - **Web Infrastructure**:
 
-  Iosub Miruna Elena
+  Iosub Miruna Elena -> mirunaiosub24@gmail.com
 
   Dinu Darius Dragos -> dariusdinu19@gmail.com
 
