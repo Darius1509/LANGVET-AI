@@ -3,9 +3,9 @@
 ## Team
 - **NLP Processing**:
 
-  Al Shrafat Maroan
+  Al shrafat Maroan -> maroan0107@yahoo.com
   
-  Ioana Peste
+  Ioana Peste -> impeste@gmail.com
 
 - **Web Infrastructure**:
 
@@ -17,7 +17,7 @@
 
   Adrian  Iftene -> adiftene@gmail.com
 
-  Diana Trandabat
+  Diana Trandabat -> dtrandabat@info.uaic.ro
 
 ## Description
 
