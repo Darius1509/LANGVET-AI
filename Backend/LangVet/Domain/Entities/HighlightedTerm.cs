@@ -6,7 +6,7 @@ namespace Domain.Entities
     {
         public HighlightedTerm(string termName, string termDefinition, string termDescription, string termLink, string termSubCluster)
         {
-            this.termId = Guid.NewGuid();
+            this.HighlightedTermId = Guid.NewGuid();
             this.termName = termName;
             this.termDefinition = termDefinition;
             this.termDescription = termDescription;
@@ -14,7 +14,7 @@ namespace Domain.Entities
             this.termSubCluster = termSubCluster;
         }
 
-        public Guid termId { get; private set; }
+        public Guid HighlightedTermId { get; private set; }
         public string termName { get; private set; }
         public string termDefinition { get; private set; }
         public string termDescription { get; private set; }
@@ -40,7 +40,7 @@ namespace Domain.Entities
             }
             var termUpdated = new HighlightedTerm(termName, termDefinition, termDescription, termLink, termSubCluster)
             {
-                termId = termId
+                HighlightedTermId = termId
             };
             return Result<HighlightedTerm>.Success(termUpdated);
         }

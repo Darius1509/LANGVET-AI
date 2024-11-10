@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Common;
+﻿using Domain.Common;
 
 namespace Domain.Entities
 {
@@ -9,72 +6,48 @@ namespace Domain.Entities
     {
         public Guid OutputTermsId { get; private set; }
         public Guid DictionaryId { get; private set; }
-        public HighlightedTerm[] HighlightedTerms { get; private set; }
+        public List<Guid> HighlightedTermIds { get; private set; }
 
-        private OutputTerms(Builder builder)
+        // Constructor for creating a new OutputTerms instance
+        public OutputTerms(Guid dictionaryId, List<Guid> highlightedTermIds)
         {
             OutputTermsId = Guid.NewGuid();
-            DictionaryId = builder.DictionaryId != Guid.Empty ? builder.DictionaryId : throw new ArgumentException("DictionaryId cannot be empty.", nameof(builder.DictionaryId));
-            HighlightedTerms = builder.HighlightedTerms ?? throw new ArgumentNullException(nameof(builder.HighlightedTerms), "Highlighted terms cannot be null or empty.");
-        }
+            DictionaryId = dictionaryId != Guid.Empty ? dictionaryId : throw new ArgumentException("DictionaryId cannot be empty.", nameof(dictionaryId));
+            HighlightedTermIds = highlightedTermIds ?? throw new ArgumentNullException(nameof(highlightedTermIds), "Highlighted term IDs cannot be null or empty.");
 
-        public class Builder
-        {
-            public Guid DictionaryId { get; private set; }
-            public HighlightedTerm[] HighlightedTerms { get; private set; }
-
-            public Builder SetDictionaryId(Guid dictionaryId)
+            if (HighlightedTermIds.Count == 0)
             {
-                DictionaryId = dictionaryId;
-                return this;
-            }
-
-            public Builder SetHighlightedTerms(List<HighlightedTerm> highlightedTerms)
-            {
-                if (highlightedTerms == null || highlightedTerms.Count == 0)
-                {
-                    throw new ArgumentException("Highlighted terms cannot be null or empty.", nameof(highlightedTerms));
-                }
-                HighlightedTerms = highlightedTerms.ToArray();
-                return this;
-            }
-
-            public OutputTerms Build()
-            {
-                return new OutputTerms(this);
+                throw new ArgumentException("Highlighted term IDs cannot be empty.", nameof(highlightedTermIds));
             }
         }
 
-        public static Result<OutputTerms> Create(Guid dictionaryId, List<HighlightedTerm> highlightedTerms)
+        // Static factory method for controlled creation of OutputTerms
+        public static Result<OutputTerms> Create(Guid dictionaryId, List<Guid> highlightedTermIds)
         {
-            var builder = new Builder()
-                .SetDictionaryId(dictionaryId)
-                .SetHighlightedTerms(highlightedTerms);
-
-            return BuildTerms(builder);
-        }
-
-        public static Result<OutputTerms> Update(Guid outputTermsId, Guid dictionaryId, List<HighlightedTerm> highlightedTerms)
-        {
-            var builder = new Builder()
-                .SetDictionaryId(dictionaryId)
-                .SetHighlightedTerms(highlightedTerms);
-
-            var outputTermsUpdated = builder.Build();
-            outputTermsUpdated.OutputTermsId = outputTermsId;
-
-            return Result<OutputTerms>.Success(outputTermsUpdated);
-        }
-
-        private static Result<OutputTerms> BuildTerms(Builder builder)
-        {
-            if (builder.DictionaryId == Guid.Empty)
+            if (dictionaryId == Guid.Empty)
                 return Result<OutputTerms>.Failure("DictionaryId cannot be empty.");
 
-            if (builder.HighlightedTerms == null || builder.HighlightedTerms.Length == 0)
-                return Result<OutputTerms>.Failure("Highlighted terms cannot be null or empty.");
+            if (highlightedTermIds == null || highlightedTermIds.Count == 0)
+                return Result<OutputTerms>.Failure("Highlighted term IDs cannot be null or empty.");
 
-            return Result<OutputTerms>.Success(builder.Build());
+            return Result<OutputTerms>.Success(new OutputTerms(dictionaryId, highlightedTermIds));
+        }
+
+        // Static method for controlled updates to OutputTerms
+        public static Result<OutputTerms> Update(Guid outputTermsId, Guid dictionaryId, List<Guid> highlightedTermIds)
+        {
+            if (dictionaryId == Guid.Empty)
+                return Result<OutputTerms>.Failure("DictionaryId cannot be empty.");
+
+            if (highlightedTermIds == null || highlightedTermIds.Count == 0)
+                return Result<OutputTerms>.Failure("Highlighted term IDs cannot be null or empty.");
+
+            var updatedOutputTerms = new OutputTerms(dictionaryId, highlightedTermIds)
+            {
+                OutputTermsId = outputTermsId // Preserve the existing ID
+            };
+
+            return Result<OutputTerms>.Success(updatedOutputTerms);
         }
     }
 }

@@ -1,88 +1,56 @@
-﻿using System;
-using Domain.Common;
+﻿using Domain.Common;
 
 namespace Domain.Entities
 {
     public class MarkedDocument
     {
-        public Guid MarkedDocId { get; private set; }
-        public Input InputDocument { get; private set; }
+        public Guid MarkedDocumentId { get; private set; }
+        public Guid InputDocumentId { get; private set; }
         public Guid DictionaryId { get; private set; }
         public string FileDownloadLink { get; private set; }
 
-        private MarkedDocument(Builder builder)
+        // Public constructor for creating a new MarkedDocument instance
+        public MarkedDocument(Guid inputDocumentId, Guid dictionaryId, string fileDownloadLink)
         {
-            MarkedDocId = Guid.NewGuid();
-            InputDocument = builder.InputDocument ?? throw new ArgumentNullException(nameof(builder.InputDocument), "InputDocument cannot be null.");
-            DictionaryId = builder.DictionaryId != Guid.Empty ? builder.DictionaryId : throw new ArgumentException("DictionaryId cannot be empty.", nameof(builder.DictionaryId));
-            FileDownloadLink = !string.IsNullOrWhiteSpace(builder.FileDownloadLink) ? builder.FileDownloadLink : throw new ArgumentException("FileDownloadLink cannot be empty.", nameof(builder.FileDownloadLink));
+            MarkedDocumentId = Guid.NewGuid();
+            InputDocumentId = inputDocumentId != Guid.Empty ? inputDocumentId : throw new ArgumentException("InputDocumentId cannot be empty.", nameof(inputDocumentId));
+            DictionaryId = dictionaryId != Guid.Empty ? dictionaryId : throw new ArgumentException("DictionaryId cannot be empty.", nameof(dictionaryId));
+            FileDownloadLink = !string.IsNullOrWhiteSpace(fileDownloadLink) ? fileDownloadLink : throw new ArgumentException("FileDownloadLink cannot be empty.", nameof(fileDownloadLink));
         }
 
-        public class Builder
+        // Static factory method for controlled creation of a MarkedDocument
+        public static Result<MarkedDocument> Create(Guid inputDocumentId, Guid dictionaryId, string fileDownloadLink)
         {
-            public Input InputDocument { get; private set; }
-            public Guid DictionaryId { get; private set; }
-            public string FileDownloadLink { get; private set; }
+            if (inputDocumentId == Guid.Empty)
+                return Result<MarkedDocument>.Failure("InputDocumentId cannot be empty.");
 
-            public Builder SetInputDocument(Input inputDocument)
-            {
-                InputDocument = inputDocument;
-                return this;
-            }
-
-            public Builder SetDictionaryId(Guid dictionaryId)
-            {
-                DictionaryId = dictionaryId;
-                return this;
-            }
-
-            public Builder SetFileDownloadLink(string fileDownloadLink)
-            {
-                FileDownloadLink = fileDownloadLink;
-                return this;
-            }
-
-            public MarkedDocument Build()
-            {
-                return new MarkedDocument(this);
-            }
-        }
-
-        public static Result<MarkedDocument> Create(Input inputDocument, Guid dictionaryId, string fileDownloadLink)
-        {
-            var builder = new Builder()
-                .SetInputDocument(inputDocument)
-                .SetDictionaryId(dictionaryId)
-                .SetFileDownloadLink(fileDownloadLink);
-
-            return BuildDocument(builder);
-        }
-
-        public static Result<MarkedDocument> Update(Guid inputDocId, Input inputDocument, Guid dictionaryId, string fileDownloadLink)
-        {
-            var builder = new Builder()
-                .SetInputDocument(inputDocument)
-                .SetDictionaryId(dictionaryId)
-                .SetFileDownloadLink(fileDownloadLink);
-
-            var markedDocUpdated = builder.Build();
-            markedDocUpdated.MarkedDocId = inputDocId;
-
-            return Result<MarkedDocument>.Success(markedDocUpdated);
-        }
-
-        private static Result<MarkedDocument> BuildDocument(Builder builder)
-        {
-            if (builder.InputDocument == null)
-                return Result<MarkedDocument>.Failure("InputDocument cannot be null.");
-
-            if (builder.DictionaryId == Guid.Empty)
+            if (dictionaryId == Guid.Empty)
                 return Result<MarkedDocument>.Failure("DictionaryId cannot be empty.");
 
-            if (string.IsNullOrWhiteSpace(builder.FileDownloadLink))
+            if (string.IsNullOrWhiteSpace(fileDownloadLink))
                 return Result<MarkedDocument>.Failure("FileDownloadLink cannot be empty.");
 
-            return Result<MarkedDocument>.Success(builder.Build());
+            return Result<MarkedDocument>.Success(new MarkedDocument(inputDocumentId, dictionaryId, fileDownloadLink));
+        }
+
+        // Static method for controlled updates to a MarkedDocument
+        public static Result<MarkedDocument> Update(Guid markedDocId, Guid inputDocumentId, Guid dictionaryId, string fileDownloadLink)
+        {
+            if (inputDocumentId == Guid.Empty)
+                return Result<MarkedDocument>.Failure("InputDocumentId cannot be empty.");
+
+            if (dictionaryId == Guid.Empty)
+                return Result<MarkedDocument>.Failure("DictionaryId cannot be empty.");
+
+            if (string.IsNullOrWhiteSpace(fileDownloadLink))
+                return Result<MarkedDocument>.Failure("FileDownloadLink cannot be empty.");
+
+            var updatedMarkedDocument = new MarkedDocument(inputDocumentId, dictionaryId, fileDownloadLink)
+            {
+                MarkedDocumentId = markedDocId  // Preserve the existing ID
+            };
+
+            return Result<MarkedDocument>.Success(updatedMarkedDocument);
         }
     }
 }
