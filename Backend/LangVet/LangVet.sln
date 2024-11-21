@@ -9,13 +9,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{0FF52E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{91B7DE57-EC12-40CC-A3CF-8FD732E5BA5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangVet.Application", "LangVet.Application\LangVet.Application.csproj", "{A939695C-077B-48B7-A26D-F539038FFB4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangVet.Application", "LangVet.Application\LangVet.Application.csproj", "{A939695C-077B-48B7-A26D-F539038FFB4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{A941120D-6FC2-49D6-A766-AB2E2EC1DACA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DDE9C837-DE74-41D4-ABEF-BCEA62A49E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangVet.Infrastructure", "LangVet.Infrastructure\LangVet.Infrastructure.csproj", "{CD3764A5-F547-46C7-B731-D9B4DF154635}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LangVet.Infrastructure", "LangVet.Infrastructure\LangVet.Infrastructure.csproj", "{CD3764A5-F547-46C7-B731-D9B4DF154635}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{E3A83BAE-63F0-44E5-A121-1C7F276C0C40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangVet.API", "LangVet.API\LangVet.API.csproj", "{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,10 @@ Global
 		{CD3764A5-F547-46C7-B731-D9B4DF154635}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD3764A5-F547-46C7-B731-D9B4DF154635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD3764A5-F547-46C7-B731-D9B4DF154635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +53,7 @@ Global
 		{A939695C-077B-48B7-A26D-F539038FFB4E} = {A941120D-6FC2-49D6-A766-AB2E2EC1DACA}
 		{A941120D-6FC2-49D6-A766-AB2E2EC1DACA} = {72849BFA-5363-4328-800E-05FF858D468B}
 		{CD3764A5-F547-46C7-B731-D9B4DF154635} = {DDE9C837-DE74-41D4-ABEF-BCEA62A49E97}
+		{2853F0EF-C07C-4CEA-85F0-194A8ACDFCFF} = {E3A83BAE-63F0-44E5-A121-1C7F276C0C40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A7572B5D-2D12-4878-B17B-C8CC0D203EF0}
