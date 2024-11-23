@@ -23,7 +23,7 @@ namespace LangVet.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.HighlightedTerm", b =>
+            modelBuilder.Entity("Domain.Entities.HighlightedTerms", b =>
                 {
                     b.Property<Guid>("HighlightedTermId")
                         .ValueGeneratedOnAdd()
