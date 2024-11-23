@@ -1,0 +1,86 @@
+.output-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  /* header  */
+  .header {
+    background-color: #4caf50; /* Green background for the header */
+    padding: 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure the header is above other content */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align the content to the right */
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Shadow only on the bottom */
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 40px; /* Adjust based on your logo size */
+    height: auto;
+  }
+
+  #LangvetAI {
+    font-size: 20px;
+    color: #9fe3a2; /* White text color */
+    margin-left: 15px;
+  }
+  
+  h1 {
+    margin: 0;
+    color: #edf9ed; /* White text color */
+    font-size: 23px; /* Adjust font size as needed */
+  }
+  
+  
+  h1 {
+    text-align: center;
+    color: #000000;
+  }
+  
+  #terms-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .term-card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+  }
+  
+  .term-card h2 {
+    color: #343a40;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .term-card p {
+    margin: 8px 0;
+  }
+  
+  .term-card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .term-card a:hover {
+    text-decoration: underline;
+  }
+  
