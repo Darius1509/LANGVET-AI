@@ -4,24 +4,18 @@ namespace Domain.Entities
 {
     public class OutputTerms
     {
+
+        public OutputTerms(Guid dictionaryId, List<Guid> highlightedTermIds)
+        {
+            OutputTermsId = Guid.NewGuid();
+            DictionaryId = dictionaryId;
+            HighlightedTermIds = highlightedTermIds;
+        }
+
         public Guid OutputTermsId { get; private set; }
         public Guid DictionaryId { get; private set; }
         public List<Guid> HighlightedTermIds { get; private set; }
 
-        // Constructor for creating a new OutputTerms instance
-        public OutputTerms(Guid dictionaryId, List<Guid> highlightedTermIds)
-        {
-            OutputTermsId = Guid.NewGuid();
-            DictionaryId = dictionaryId != Guid.Empty ? dictionaryId : throw new ArgumentException("DictionaryId cannot be empty.", nameof(dictionaryId));
-            HighlightedTermIds = highlightedTermIds ?? throw new ArgumentNullException(nameof(highlightedTermIds), "Highlighted term IDs cannot be null or empty.");
-
-            if (HighlightedTermIds.Count == 0)
-            {
-                throw new ArgumentException("Highlighted term IDs cannot be empty.", nameof(highlightedTermIds));
-            }
-        }
-
-        // Static factory method for controlled creation of OutputTerms
         public static Result<OutputTerms> Create(Guid dictionaryId, List<Guid> highlightedTermIds)
         {
             if (dictionaryId == Guid.Empty)
@@ -33,7 +27,6 @@ namespace Domain.Entities
             return Result<OutputTerms>.Success(new OutputTerms(dictionaryId, highlightedTermIds));
         }
 
-        // Static method for controlled updates to OutputTerms
         public static Result<OutputTerms> Update(Guid outputTermsId, Guid dictionaryId, List<Guid> highlightedTermIds)
         {
             if (dictionaryId == Guid.Empty)
@@ -44,7 +37,7 @@ namespace Domain.Entities
 
             var updatedOutputTerms = new OutputTerms(dictionaryId, highlightedTermIds)
             {
-                OutputTermsId = outputTermsId // Preserve the existing ID
+                OutputTermsId = outputTermsId
             };
 
             return Result<OutputTerms>.Success(updatedOutputTerms);
