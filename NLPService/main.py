@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify
-from EntityExtractors.DictionaryEntityExtractor import DictionaryEntityExtractor
+from EntityExtractors.DictionaryEntityExtractor import CorpusEntityExtractor
 from EntityExtractors.MLEntityExtractor import MLEntityExtractor
+from DatabaseManager import DBManager
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
 def get_extractor(extractor_name):
     if extractor_name == "dictionary":
-        return DictionaryEntityExtractor()
+        return CorpusEntityExtractor()
     elif extractor_name == "ml":
         return MLEntityExtractor()
     else:
@@ -15,14 +18,17 @@ def get_extractor(extractor_name):
 
 @app.route('/api/get_terms/', methods=['GET'])
 def get_terms():
-    extractor_name = request.args.get('extractor')
-    extractor = get_extractor(extractor_name)
 
-    if extractor is None:
-        return jsonify({"error": "Provided extractor is not a valid one!!"})
-    dummy_text = request.args.get('text')
+    extractor = CorpusEntityExtractor()
+    extractor.load_onto('ontologies/vsao.owl')
+    text = request.args.get('text')
+    return jsonify({"terms": extractor.identify_entities(text, db_instance)})
 
-    return jsonify({"entities": extractor.identify_entities()})
 
 if __name__=='__main__':
+
+    load_dotenv()
+    db_instance = DBManager(dbname=os.getenv('dbname'), user=os.getenv('user'), password=os.getenv('password'), host=os.getenv('host'))
+
     app.run(debug=True)
+
