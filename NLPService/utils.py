@@ -1,7 +1,9 @@
 import re
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-
+import nltk
+nltk.download('punkt_tab')
+nltk.download('wordnet')
 
 #This function has the responsability to preprocess the text before extracting the entities.
 #decorator
