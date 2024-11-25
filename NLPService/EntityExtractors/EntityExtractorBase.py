@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 
 
-class EntityExtractorBase(ABC):
+class EntityExtractor(ABC):
     def __init__(self):
         pass
 
