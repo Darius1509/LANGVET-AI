@@ -19,7 +19,15 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("http://localhost:5173")
                .AllowAnyHeader()
                .AllowAnyMethod());
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // React app's origin
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
+
+
 
 builder.Services.AddSwaggerGen();
 
@@ -35,6 +43,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("Open");
+app.UseCors("AllowLocalhost3000");
 
 app.UseRouting();
 

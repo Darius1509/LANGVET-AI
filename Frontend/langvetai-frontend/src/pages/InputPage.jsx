@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/InputPage.css';
 
 const InputPage = ({ onSubmit }) => {
@@ -10,48 +11,44 @@ const InputPage = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Mock NLP response for demonstration
-  const mockNlpResponse = {
-    terms: [
-      {
-        termName: "Bengal tiger",
-        termDefinition: "A subspecies of tiger primarily found in India.",
-        termDescription: "The Bengal tiger is known for its orange coat with black stripes.",
-        termLink: "https://en.wikipedia.org/wiki/Bengal_tiger",
-        termSubCluster: "Mammals",
-      },
-      {
-        termName: "Panthera tigris tigris",
-        termDefinition: "The scientific name for the Bengal tiger.",
-        termDescription: "Panthera tigris tigris is the nominate subspecies of tiger.",
-        termLink: "https://en.wikipedia.org/wiki/Tiger",
-        termSubCluster: "Mammals",
-      },
-      {
-        termName: "tropical rainforests",
-        termDefinition: "Dense forests in tropical regions with high rainfall.",
-        termDescription: "Tropical rainforests support a diverse range of species.",
-        termLink: "https://en.wikipedia.org/wiki/Rainforest",
-        termSubCluster: "Ecosystems",
-      },
-    ],
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setIsSubmitting(true);
 
     try {
-      // Simulate the processing and pass the mock response to the parent component
-      setTimeout(() => {
-        onSubmit(mockNlpResponse); // Pass mock data
-        navigate('/output'); // Redirect to OutputPage
-      }, 1000);
+      const response = await axios.get(`http://127.0.0.1:5000/api/get_terms?text="${encodeURIComponent(inputText)}"`);
+      
+      console.log("Terms received from API:", response.data.terms);
+
+      const terms = response.data.terms;
+      const termsDetails = await getTermsDetails(terms);
+      console.log("Fetched terms details:", termsDetails);
+
+      onSubmit(termsDetails);
+      navigate('/output');
+
     } catch (err) {
-      setErrorMessage(err.message || 'Failed to process input.');
+      setErrorMessage('Failed to fetch terms. Please try again.');
+      console.error('Error fetching terms:', err);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+
+  const getTermsDetails = async (terms) => {
+    try {
+      const termDetails = await Promise.all(terms.map(async (termId) => {
+        const response = await axios.get(`https://localhost:7231/api/v1/HighlightedTerm/id/${termId}`);
+        console.log("Fetched term details for ID", termId, response.data);
+        return response.data;
+      }));
+      return termDetails;
+    } catch (err) {
+      console.error('Error fetching term details:', err);
+      setErrorMessage('Failed to fetch term details.');
+      return [];
     }
   };
 

@@ -4,8 +4,10 @@ from EntityExtractors.MLEntityExtractor import MLEntityExtractor
 from DatabaseManager import DBManager
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 def get_extractor(extractor_name):
     if extractor_name == "dictionary":
