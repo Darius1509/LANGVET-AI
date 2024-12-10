@@ -1,9 +1,16 @@
 import re
+import os
+import math
+import nltk
+from openai import OpenAI
+from dotenv import load_dotenv
+from collections import Counter
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-import nltk
 nltk.download('punkt_tab')
 nltk.download('wordnet')
+
+CONST_REGEX_WORD = re.compile(r"\w+")
 
 #This function has the responsability to preprocess the text before extracting the entities.
 #decorator
@@ -14,8 +21,7 @@ def preprocessor(function: callable) -> callable:
             raise ValueError("Text is empty")
         return function(text)
     return preprocess
-
-
+    
 def preprocessor(text: str) -> str:
     lemmatizer = WordNetLemmatizer()
     
@@ -29,8 +35,70 @@ def preprocessor(text: str) -> str:
     
     return processed_text
 
+def sentences_preprocessor(text: str) -> str:
+    lemmatizer = WordNetLemmatizer()
+    sentences = nltk.sent_tokenize(text)
+    preprocessed_sentences = []
+    for sentence in sentences:
+        sentence = sentence.lower()
+        sentence = re.sub(r'[^a-z0-9\s]', '', sentence)
+        words = word_tokenize(sentence)
+        lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
+
+        processed_sentence = ' '.join(lemmatized_words)
+        preprocessed_sentences.append(processed_sentence)
+    
+    return preprocessed_sentences
+
 def count_capital_letters(text: str) -> int:
     return sum(1 for c in text if c.isupper())
 
 def count_special_characters(text: str) -> int:
     return sum(1 for c in text if not c.isalnum() and not c.isspace())
+
+def calculate_similarity(vec1, vec2):
+    #https://en.wikipedia.org/wiki/Cosine_similarity
+
+    _set = set(vec1.keys()) & set(vec2.keys())
+    dot_p = sum([vec1[x] * vec2[x] for x in _set])
+
+    sum1 = sum([vec1[x] ** 2 for x in list(vec1.keys())])
+    sum2 = sum([vec2[x] ** 2 for x in list(vec2.keys())])
+    sq_product = math.sqrt(sum1) * math.sqrt(sum2)
+
+    if not sq_product:
+        return 0.0
+    else:
+        return float(dot_p) / sq_product
+
+
+def text_to_freq(text):
+    words = CONST_REGEX_WORD.findall(text)
+    return Counter(words)
+
+def generate_cluster_description(terms):
+    load_dotenv()
+    client = OpenAI(api_key=os.getenv('openai_key'))
+    response = client.chat.completions.create(
+    model="gpt-3.5-turbo-0125",
+    messages=[
+        {
+        "role": "system",
+        "content": [
+            {
+            "text": "Your task is to take a list of terms, separated by commas, that are related to the veterinary domain and generate a descriptive summary, explaining their common themes and significance.",
+            "type": "text"
+            }
+        ]
+        },
+        {
+        "role": "user",
+        "content": [
+            {
+            "text": ', '.join(terms),
+            "type": "text"
+            }
+        ]
+        }
+    ])
+    print(response.choices[0].message.content)
