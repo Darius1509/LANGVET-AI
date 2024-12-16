@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import InputPage from './pages/InputPage';
 import OutputPage from './pages/OutputPage';
 
 const App = () => {
-  const [terms, setTerms] = useState([]);
+  const [outputData, setOutputData] = useState({ clusters: [], terms: [] });
 
-  const handleTermsSubmit = (termsDetails) => {
-    setTerms(termsDetails);
+  const handleInputSubmit = (data) => {
+    setOutputData(data);
   };
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<InputPage onSubmit={handleTermsSubmit} />} />
-        <Route path="/output" element={<OutputPage terms={terms} />} />
+        <Route path="/" element={<InputPage onSubmit={handleInputSubmit} />} />
+        <Route path="/output" element={<OutputPage clusters={outputData.clusters} />} />
       </Routes>
     </Router>
   );
