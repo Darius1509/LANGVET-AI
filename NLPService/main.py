@@ -24,7 +24,7 @@ def get_terms():
     extractor = CorpusEntityExtractor()
     extractor.load_onto('ontologies/vsao.owl')
     text = request.args.get('text')
-    return jsonify({"terms": extractor.identify_entities(text, db_instance)})
+    return jsonify(extractor.identify_entities(text, db_instance))
 
 
 if __name__=='__main__':
