@@ -3,6 +3,9 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+from cdlib import algorithms
+import utils as u
+from itertools import combinations
 
 def metric(graph, communities, node, target_community):
     
@@ -22,16 +25,26 @@ def metric(graph, communities, node, target_community):
 class Graph:
     _graph = None
 
-    def __init__(self, list):
+    def __init__(self, terms):
         self._graph = nx.Graph()
-        self._graph.add_edges_from(list)
+        
+        entries = list(terms.items())
+        entries_pairs = list(combinations(entries, 2))
+        for pair in entries_pairs:
+            freq_1 = u.text_to_freq(pair[0][1]['context'])
+            freq_2 = u.text_to_freq(pair[1][1]['context'])
+            similarity = u.calculate_similarity(freq_1, freq_2)
+            if similarity > 0.3:
+                self._graph.add_edge(pair[0][0], pair[1][0], weight=similarity)
+        #for edge in self._graph.edges(data=True):
+            #print(edge[2]['weight'])
 
     def get_graph(self):
         return self._graph
 
     def compute_clusters(self, iterations):
         communities = {node: node for node in self._graph.nodes()}
-
+        coms = algorithms.leiden(self._graph)
         for _ in range(iterations): 
             nodes = list(self._graph.nodes())
             random.shuffle(nodes)
@@ -45,3 +58,5 @@ class Graph:
                         best_community = target_community
                         max_gain = gain
                 communities[node] = best_community
+
+        return coms.communities
