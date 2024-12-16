@@ -7,27 +7,46 @@ const OutputPage = ({ clusters }) => {
   const navigate = useNavigate();
   const [termDetails, setTermDetails] = useState({}); // Cache for term details
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // To show loading indicator
 
   const handleLogoClick = () => {
     navigate('/');
   };
 
-  const fetchTermDetails = async (termId) => {
-    if (termDetails[termId]) {
-      return; 
-    }
-
+  // Function to fetch term details for a list of terms
+  const getTermsDetails = async (terms) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/api/highlighted-terms/${termId}`);
-      setTermDetails((prev) => ({
-        ...prev,
-        [termId]: response.data, // Cache the fetched term details
+      setIsLoading(true); // Start loading indicator
+      const termDetails = await Promise.all(
+        terms.map(async (termId) => {
+          const response = await axios.get(`https://localhost:7231/api/v1/HighlightedTerm/id/${termId}`);
+          console.log("Fetched term details for ID", termId, response.data);
+          return { termId, ...response.data }; // Include termId for later reference
+        })
+      );
+      
+      const termDetailsMap = termDetails.reduce((acc, termDetail) => {
+        acc[termDetail.termId] = termDetail;
+        return acc;
+      }, {});
+      
+      setTermDetails((prevDetails) => ({
+        ...prevDetails,
+        ...termDetailsMap, // Merge with existing term details in state
       }));
     } catch (err) {
       console.error('Error fetching term details:', err);
-      setError(`Failed to fetch details for term ID: ${termId}`);
+      setError('Failed to fetch term details.');
+    } finally {
+      setIsLoading(false); // End loading indicator
     }
   };
+
+  // Use useEffect to fetch details for all terms when clusters are loaded
+  useEffect(() => {
+    const termIds = clusters.flatMap(cluster => cluster.nodes.map(node => node.term_id));
+    getTermsDetails(termIds);
+  }, [clusters]); // Fetch term details when clusters change
 
   return (
     <div className="output-container">
@@ -40,6 +59,7 @@ const OutputPage = ({ clusters }) => {
 
       <h1>NLP Output</h1>
       {error && <p className="error">{error}</p>}
+      {isLoading && <p>Loading term details...</p>} {/* Loading message */}
 
       <div id="clusters-list">
         {clusters && clusters.length > 0 ? (
@@ -52,30 +72,29 @@ const OutputPage = ({ clusters }) => {
                 </p>
               )}
               <div className="nodes-list">
-                {cluster.nodes.map((node, nodeIndex) => (
+                {cluster.nodes.map((node) => (
                   <div
-                    key={nodeIndex}
+                    key={node.term_id}
                     className="term-card"
-                    onClick={() => fetchTermDetails(node.term_id)} // Trigger fetch on click or hover
                   >
                     <h3>{node.term_name}</h3>
-                    <p>
-                      <strong>Context:</strong> {node.context}
-                    </p>
-                    <p>
-                      <strong>Term ID:</strong> {node.term_id}
-                    </p>
+                    <p><strong>Context:</strong> {node.context}</p>
+                    <p><strong>Term ID:</strong> {node.term_id}</p>
+
                     {/* Show term details if available in the cache */}
                     {termDetails[node.term_id] && (
                       <div className="term-details">
-                        <p>
-                          <strong>Definition:</strong>{' '}
-                          {termDetails[node.term_id].termDefinition || 'N/A'}
-                        </p>
-                        <p>
-                          <strong>Description:</strong>{' '}
-                          {termDetails[node.term_id].termDescription || 'N/A'}
-                        </p>
+                        
+                        <p><strong>Definition:</strong> {termDetails[node.term_id].termDefinition || 'N/A'}</p>
+                        <p><strong>Description:</strong> {termDetails[node.term_id].termDescription || 'N/A'}</p>
+                        {termDetails[node.term_id].termLink && (
+                          <p>
+                            <strong>Link:</strong>{' '}
+                            <a href={termDetails[node.term_id].termLink} target="_blank" rel="noopener noreferrer">
+                              {termDetails[node.term_id].termLink}
+                            </a>
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
