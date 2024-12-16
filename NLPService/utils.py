@@ -86,7 +86,7 @@ def generate_cluster_description(terms):
         "role": "system",
         "content": [
             {
-            "text": "Your task is to take a list of terms, separated by commas, that are related to the veterinary domain and generate a descriptive summary, explaining their common themes and significance.",
+            "text": "Your task is to take a list of terms, separated by commas, that are related to the veterinary domain and generate a short descriptive summary, explaining their common themes and significance.",
             "type": "text"
             }
         ]
@@ -101,4 +101,35 @@ def generate_cluster_description(terms):
         ]
         }
     ])
-    print(response.choices[0].message.content)
+    return response.choices[0].message.content
+
+
+def openai_extract_terms(text):
+    load_dotenv()
+    client = OpenAI(api_key=os.getenv('openai_key'))
+    response = client.chat.completions.create(
+    model="gpt-3.5-turbo-0125",
+    messages=[
+        {
+        "role": "system",
+        "content": [
+            {
+            "text": "Your task is to extract the veterinary medical terms from a given text. Your output will be a json string that contains the list with the terms. Each entry in the list will be a term, the sentence where the term was found and a short description of the term. Please output only the json and don't enclose the output in '```'. Try that with the following text:",
+            "type": "text"
+            }
+        ]
+        },
+        {
+        "role": "user",
+        "content": [
+            {
+            "text": text,
+            "type": "text"
+            }
+        ]
+        }
+    ])
+    return response.choices[0].message.content
+
+
+#openai_extract_terms("Within the limb, the metapodial skeleton plays a key role in connecting the main body to the digits. The femur, part of the hindlimb, is one of the largest bones in vertebrates and exemplifies the role of mineralized bone tissue in weight-bearing.")
