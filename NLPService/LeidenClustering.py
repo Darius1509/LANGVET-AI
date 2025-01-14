@@ -36,13 +36,11 @@ class Graph:
             similarity = u.calculate_similarity(freq_1, freq_2)
             if similarity > 0.3:
                 self._graph.add_edge(pair[0][0], pair[1][0], weight=similarity)
-        #for edge in self._graph.edges(data=True):
-            #print(edge[2]['weight'])
 
     def get_graph(self):
         return self._graph
 
-    def compute_clusters(self, iterations):
+    def compute_clusters(self, iterations=1):
         communities = {node: node for node in self._graph.nodes()}
         coms = algorithms.leiden(self._graph)
         for _ in range(iterations): 
@@ -53,10 +51,9 @@ class Graph:
                 max_gain = 0
                 for neighbor in self._graph.neighbors(node):
                     target_community = communities[neighbor]
-                    gain = metric(self._graph, communities, node, target_community)
+                    gain = max_gain
                     if gain > max_gain:
                         best_community = target_community
                         max_gain = gain
                 communities[node] = best_community
-
         return coms.communities
