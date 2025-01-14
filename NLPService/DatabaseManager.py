@@ -11,7 +11,7 @@ class DBManager:
             cls._instance._initialize_connection(*args, **kwargs)
         return cls._instance
 
-    def check_term(self, term, definition):
+    def insert_term(self, term, definition):
         if self.cursor:
             try:
                 self.cursor.execute('SELECT "HighlightedTermId" FROM "highlightedTerms" WHERE "termName" = %s;', (term,))
