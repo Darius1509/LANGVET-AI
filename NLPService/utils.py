@@ -129,7 +129,4 @@ def openai_extract_terms(text):
         ]
         }
     ])
-    return response.choices[0].message.content
-
-
-#openai_extract_terms("Within the limb, the metapodial skeleton plays a key role in connecting the main body to the digits. The femur, part of the hindlimb, is one of the largest bones in vertebrates and exemplifies the role of mineralized bone tissue in weight-bearing.")
+    return response.choices[0].message.content.replace('```', '').replace('json', '')

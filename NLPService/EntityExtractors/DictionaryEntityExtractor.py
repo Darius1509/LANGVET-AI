@@ -8,12 +8,16 @@ import utils
 class CorpusEntityExtractor(EntityExtractor):
 
     ontology = None
+    terms = None
 
     def __init__(self):
         pass
     
     def load_onto(self, onto_path):
         self.ontology = get_ontology(onto_path).load()
+
+    def load_terms(self, arg):
+        self.terms = arg
 
     def identify_entities(self, text, db_instance):
         index = 0
@@ -28,15 +32,17 @@ class CorpusEntityExtractor(EntityExtractor):
                 if cls.label is not None and cls.label[0] in sentence:
                     term = cls.label[0]
                     definition = cls.IAO_0000115[0] if cls.IAO_0000115 else "No definition"
-                    term_id = db_instance.check_term(term, definition)
-                    test = {'term_id': term_id, 'context': sentence, 'term_name': term}
-                    graph_nodes[index] = test
+                    term_id = self.terms.get(term)[0]
+                    if term_id is None:
+                        term_id = db_instance.insert_term(term, definition)
+                        self.terms[term] = [term_id, definition]
+                    node = {'term_id': term_id, 'context': sentence, 'term_name': term}
+                    graph_nodes[index] = node
                     output['terms'].append(term_id)
                     index += 1
-        
         g = Graph(graph_nodes)
 
-        communities = g.compute_clusters(10)
+        communities = g.compute_clusters()
         clusters = []
         for community in communities:
             cluster = {}
@@ -48,13 +54,6 @@ class CorpusEntityExtractor(EntityExtractor):
             cluster['summary'] = utils.generate_cluster_description(terms_list)
             clusters.append(cluster)
         output['clusters'] = clusters
-        
-        '''preprocessed_text = utils.preprocessor(text)
-        for cls in self.ontology.classes():
-            term = cls.label[0] if cls.label else "No label"
-            definition = cls.IAO_0000115[0] if cls.IAO_0000115 else "No definition"
-            if cls.label and term in preprocessed_text:
-                terms.append(db_instance.check_term(term, definition))'''
 
         return output
     
