@@ -1,6 +1,7 @@
 import json
 from utils import openai_extract_terms
 from EntityExtractors.EntityExtractorBase import EntityExtractor
+from FileManager import FileManager
 from LeidenClustering import Graph
 import utils
 #This class implements EntityExtractorBase class
@@ -24,16 +25,19 @@ class MLEntityExtractor(EntityExtractor):
         output = {}
         output['terms'] = []
         output['clusters'] = []
-        for term in data:
+        print(data)
+        for term in data['terms']:
             term_id = self.terms.get(term['term'])[0]
             if term_id is None:
                 term_id = db_instance.insert_term(term, term['description'])
                 self.terms[term] = [term_id, term['description']]
-            node = {'term_id': term_id, 'context': term['sentence'], 'term_name': term['term']}
+            node = {'term_id': term_id, 'context': term['sentence'], 'term_name': term['term'], 'definition': term['description']}
             graph_nodes[index] = node
             output['terms'].append(term_id)
             index += 1
 
+        manager = FileManager()
+        manager.generate_document(graph_nodes)
         g = Graph(graph_nodes)
 
         communities = g.compute_clusters()
