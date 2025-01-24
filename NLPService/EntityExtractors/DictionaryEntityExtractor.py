@@ -1,6 +1,7 @@
 from EntityExtractors.EntityExtractorBase import EntityExtractor
 from owlready2 import *
 from LeidenClustering import Graph
+from FileManager import FileManager
 import utils
 #This class implements EntityExtractorBase class
 #The algorithm used in this class is to identify veterinary entities using a corpus.
@@ -36,10 +37,12 @@ class CorpusEntityExtractor(EntityExtractor):
                     if term_id is None:
                         term_id = db_instance.insert_term(term, definition)
                         self.terms[term] = [term_id, definition]
-                    node = {'term_id': term_id, 'context': sentence, 'term_name': term}
+                    node = {'term_id': term_id, 'context': sentence, 'term_name': term, 'definition': definition}
                     graph_nodes[index] = node
                     output['terms'].append(term_id)
                     index += 1
+        manager = FileManager()
+        manager.generate_document(graph_nodes)
         g = Graph(graph_nodes)
 
         communities = g.compute_clusters()
